@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Visits from './Visits';
 import Home from './Home';
@@ -9,32 +8,35 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import {Navbar, Nav} from 'react-bootstrap'
 
 function App() {
   return (
     <Router>
       <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/visits">Visits</Link>
-            </li>
-          </ul>
-          <Switch>
-            <Route path="/visits">
-              <Visits />
-            </Route>
-            <Route path="/">
-              <Home />
-            </Route>
-          </Switch>
-        </nav>
+        <Navbar bg="light" expand="lg">
+          <Navbar.Brand as={Link} to="/" >React-Bootstrap</Navbar.Brand>
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="mr-auto">
+              <Nav.Link href="/">Home</Nav.Link>
+              <Nav.Link href="/visits">Visits</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>
+      </div>
+      <div>
+        <Switch>
+          <Route path="/visits">
+            <Visits />
+          </Route>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
       </div>
     </Router>
   );
+
   // return (
   //   <div className="App">
   //     <header className="App-header">
