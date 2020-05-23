@@ -3,6 +3,7 @@ import numpy as np
 
 from flask import Flask, json_available, jsonify
 from flask_cors import CORS, cross_origin
+from flask import request
 
 app = Flask(__name__)
 cors= CORS(app)
@@ -22,9 +23,12 @@ def preprocess():
 #TODO - Model prediction function
 @app.route('/predict', methods=['POST'])
 @cross_origin()
-def predict(data):
+def predict():
     # print(data)
-    return 'predicted',200
+    formData=request.form
+    filename=formData['filename']
+    print(filename)
+    return filename
 
 
 app.run()
