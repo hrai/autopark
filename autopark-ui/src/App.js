@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import Visits from './Visits';
 import Home from './Home';
+import Uploader from './Uploader';
 import {
   BrowserRouter as Router,
   Switch,
@@ -20,6 +21,7 @@ function App() {
             <Nav className="mr-auto">
               <Nav.Link href="/">Home</Nav.Link>
               <Nav.Link href="/visits">Visits</Nav.Link>
+              <Nav.Link href="/uploader">Image Uploader</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
@@ -28,6 +30,9 @@ function App() {
         <Switch>
           <Route path="/visits">
             <Visits />
+          </Route>
+          <Route path="/uploader">
+            <Uploader />
           </Route>
           <Route path="/">
             <Home />
