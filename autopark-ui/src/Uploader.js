@@ -1,12 +1,41 @@
 import React from 'react';
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
 
 
 export default function Uploader() {
   // const {handleSubmit,register,errors}=useForm();
   const {handleSubmit}=useForm();
-  const onSubmit=values=>console.log(values);
 
+  /*
+  postImage = (imageData) => {
+    const url='http://localhost:5000/predict';
+    axios.post(url, imageData, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+    });
+  }
+  */
+
+  const onSubmit = values => postImage(values);
+
+  function postImage(imageData) {
+    const url='http://localhost:5000/predict';
+
+    var bodyFormData=new FormData();
+    bodyFormData.set('file', 'TestFile');
+    bodyFormData.append('image', imageData);
+
+    axios.post(url, bodyFormData, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'multipart/form-data',
+      }
+    })
+    .then(resp=> console.log(resp))
+    .catch(err=>console.error(err));
+  }
   return (
     <form onSubmit={ handleSubmit(onSubmit) }>
       <div class="form-group">
