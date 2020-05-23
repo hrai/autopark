@@ -24,7 +24,7 @@ export default function Uploader() {
     const url='http://localhost:5000/predict';
 
     var bodyFormData=new FormData();
-    bodyFormData.set('file', 'TestFile');
+    bodyFormData.set('filename', 'TestFile');
     bodyFormData.append('image', imageData);
 
     axios.post(url, bodyFormData, {
