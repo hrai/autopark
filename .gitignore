@@ -309,3 +309,8 @@ snap/
 xamarin.gpg*
 *.files
 *.deb
+
+
+# PyCache ignore
+__pycache__/
+_pycache_/
