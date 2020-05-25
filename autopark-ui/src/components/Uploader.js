@@ -7,17 +7,6 @@ export default function Uploader() {
   // const {handleSubmit,register,errors}=useForm();
   const {handleSubmit} = useForm();
 
-  /*
-  postImage = (imageData) => {
-    const url='http://localhost:5000/predict';
-    axios.post(url, imageData, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      }
-    });
-  }
-  */
-
   const onSubmit = values => postImage(values);
 
   function postImage(imageData) {
