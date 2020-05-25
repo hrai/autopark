@@ -27,8 +27,14 @@ def predict():
     # print(data)
     formData=request.form
     filename=formData['filename']
-    print(filename)
-    return filename
 
+    response =	{
+        "startTime": "09:30",
+        "finishTime": "10:15",
+        "totalTime": "45m",
+        "amount": "$8.82"
+    }
+
+    return response
 
 app.run()
