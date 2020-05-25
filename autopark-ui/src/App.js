@@ -3,6 +3,7 @@ import './App.css';
 import Visits from '../src/components/Visits'
 import Home from './Home';
 import Uploader from '../src/components/Uploader'
+import Summary from '../src/components/Summary'
 import {
   BrowserRouter as Router,
   Switch,
@@ -33,6 +34,9 @@ function App() {
           </Route>
           <Route path="/uploader">
             <Uploader />
+          </Route>
+          <Route path="/summary">
+            <Summary />
           </Route>
           <Route path="/">
             <Home />

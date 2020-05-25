@@ -1,12 +1,10 @@
 import React from 'react';
 import {useForm} from 'react-hook-form';
 import axios from 'axios';
+import {withRouter} from "react-router";
 
-
-export default function Uploader() {
-  // const {handleSubmit,register,errors}=useForm();
+function UploaderComp(props) {
   const {handleSubmit} = useForm();
-
   const onSubmit = values => postImage(values);
 
   function postImage(imageData) {
@@ -22,7 +20,10 @@ export default function Uploader() {
         'Content-Type': 'multipart/form-data',
       }
     })
-      .then(resp => console.log(resp))
+      .then(resp => {
+        console.log(resp);
+        props.history.push('/summary');
+      })
       .catch(err => console.error(err));
   }
 
@@ -38,3 +39,6 @@ export default function Uploader() {
     </div>
   );
 }
+
+const Uploader = withRouter(UploaderComp);
+export default Uploader;
