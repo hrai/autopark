@@ -1,8 +1,8 @@
 import React from 'react';
 import './App.css';
-import Visits from './Visits';
+import Visits from '../src/components/Visits'
 import Home from './Home';
-import Uploader from './Uploader';
+import Uploader from '../src/components/Uploader'
 import {
   BrowserRouter as Router,
   Switch,
@@ -16,7 +16,7 @@ function App() {
     <Router>
       <div>
         <Navbar bg="light" expand="lg">
-          <Navbar.Brand as={Link} to="/" >React-Bootstrap</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/" >Plate Mates</Navbar.Brand>
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
               <Nav.Link href="/">Home</Nav.Link>

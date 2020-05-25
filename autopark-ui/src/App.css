@@ -1,3 +1,7 @@
+* {
+  font-family: sans-serif;
+}
+
 .App {
   text-align: center;
 }
@@ -35,4 +39,27 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+
+.homeDeck {
+  padding-top: 50px;
+}
+
+.cardStyle {
+  box-shadow: 0 12px 34px rgba(0,0,0,0.30), 0 12px 9px rgba(0,0,0,0.22);
+  padding-bottom: 20px;
+  background: #fafafa;
+}
+
+.getStarted {
+  padding-top: 60px;
+  text-align: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.uploadBtn {
+  padding-top: 20px;
+  padding-left: 22px;
 }

@@ -37,12 +37,14 @@ export default function Uploader() {
     .catch(err=>console.error(err));
   }
   return (
-    <form onSubmit={ handleSubmit(onSubmit) }>
-      <div class="form-group">
-          <label for="uploader">Image</label>
-          <input type="file" class="form-control" id="uploader" aria-describedby="emailHelp"/>
-      </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+    <div class="container">
+      <form onSubmit={ handleSubmit(onSubmit) }>
+        <div class="form-group">
+            <label for="uploader">Image</label>
+            <input type="file" class="form-control" id="uploader" aria-describedby="emailHelp"/>
+        </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
   );
 }
