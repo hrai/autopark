@@ -1,0 +1,6 @@
+# ignore dataset folders/files (keep archive)
+
+train/
+test/
+validation/
+
