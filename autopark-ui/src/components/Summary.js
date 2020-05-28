@@ -1,11 +1,17 @@
 import React from 'react';
+import {withRouter} from "react-router";
 
 
-export default function Summary() {
+function SummaryComp(props) {
+
+  const data = props.location.state.data;
 
   return (
     <div class="container">
-      Testing
+      {data['amount']}
     </div>
   );
 }
+
+const Summary = withRouter(SummaryComp);
+export default Summary;

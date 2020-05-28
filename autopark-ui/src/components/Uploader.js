@@ -20,9 +20,9 @@ function UploaderComp(props) {
         'Content-Type': 'multipart/form-data',
       }
     })
-      .then(resp => {
-        console.log(resp);
-        props.history.push('/summary');
+      .then(response => {
+        console.log(response);
+        props.history.push('/summary', {data: response.data});
       })
       .catch(err => console.error(err));
   }
