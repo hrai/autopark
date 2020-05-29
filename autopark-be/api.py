@@ -24,7 +24,6 @@ def preprocess():
 @app.route('/predict', methods=['POST'])
 @cross_origin()
 def predict():
-    # print(data)
     formData=request.form
     filename=formData['filename']
 
