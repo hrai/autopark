@@ -29,31 +29,33 @@ export default function Visits() {
   const classes = useStyles();
 
   return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Number Plate</TableCell>
-            <TableCell align="right">Parked Time</TableCell>
-            <TableCell align="right">Amount ($)</TableCell>
-            <TableCell align="right">Paid</TableCell>
-            <TableCell align="right">Date</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.numPlate}
-              </TableCell>
-              <TableCell align="right">{row.parkedTime}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
-              <TableCell align="right">{row.paid ? 'Yes' : 'No'}</TableCell>
-              <TableCell align="right">{row.date}</TableCell>
+    <div class="container">
+      <TableContainer component={Paper}>
+        <Table className={classes.table} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Number Plate</TableCell>
+              <TableCell align="right">Parked Time</TableCell>
+              <TableCell align="right">Amount ($)</TableCell>
+              <TableCell align="right">Paid</TableCell>
+              <TableCell align="right">Date</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow key={row.name}>
+                <TableCell component="th" scope="row">
+                  {row.numPlate}
+                </TableCell>
+                <TableCell align="right">{row.parkedTime}</TableCell>
+                <TableCell align="right">{row.amount}</TableCell>
+                <TableCell align="right">{row.paid ? 'Yes' : 'No'}</TableCell>
+                <TableCell align="right">{row.date}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 }
