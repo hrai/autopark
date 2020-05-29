@@ -24,6 +24,7 @@ function SummaryComp(props) {
 
   return (
     <div class="container">
+      <h3>Summary</h3>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableBody>
