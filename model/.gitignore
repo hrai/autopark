@@ -4,3 +4,8 @@ train/
 test/
 validation/
 
+# ignore model weights and ipynb checkpoints
+
+checkpoints/
+.ipynb_checkpoints/
+
