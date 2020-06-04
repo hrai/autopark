@@ -40,7 +40,8 @@ def predict():
         "finishTime": "10:15",
         "totalTime": "45m",
         "amount": "$8.82",
-        "image_b64": encoded
+        "image_b64": encoded,
+        "numberPlate": "AWK477"
     }
 
     return response
