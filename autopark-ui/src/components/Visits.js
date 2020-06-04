@@ -12,6 +12,9 @@ const useStyles = makeStyles({
   table: {
     minWidth: 650,
   },
+  th: {
+    fontWeight: "bold"
+  }
 });
 
 function createData(numPlate, parkedTime, amount, paid, date) {
@@ -35,11 +38,11 @@ export default function Visits() {
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Number Plate</TableCell>
-              <TableCell align="right">Parked Time</TableCell>
-              <TableCell align="right">Amount ($)</TableCell>
-              <TableCell align="right">Paid</TableCell>
-              <TableCell align="right">Date</TableCell>
+              <TableCell className={classes.th}>Number Plate</TableCell>
+              <TableCell className={classes.th} align="right">Parked Time</TableCell>
+              <TableCell className={classes.th} align="right">Amount ($)</TableCell>
+              <TableCell className={classes.th} align="right">Paid</TableCell>
+              <TableCell className={classes.th} align="right">Date</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
