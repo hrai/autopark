@@ -71,3 +71,4 @@ def get_current_time():
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     return dt_string
 
+app.run()
