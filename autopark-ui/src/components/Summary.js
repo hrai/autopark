@@ -41,7 +41,7 @@ function SummaryComp(props) {
   return (
     <div class="container">
       <h3>Summary</h3>
-      {startTimer ?
+      {!startTimer ?
         <>
           <div className={classes.table}>
             <TableContainer component={Paper}>

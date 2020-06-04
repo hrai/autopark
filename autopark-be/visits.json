@@ -1,0 +1,15 @@
+{
+  "visits": [
+    {
+      "startTime": "09:30",
+      "finishTime": "10:15",
+      "totalTime": "45m",
+      "amount": "$8.82",
+      "numberPlate": "AWK477"
+    },
+    {
+      "startTime": "18:26",
+      "numberPlate": "AWK477"
+    }
+  ]
+}

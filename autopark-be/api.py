@@ -7,6 +7,7 @@ from flask import request
 # import io
 # from PIL import Image
 import base64
+import json
 from datetime import datetime
 
 
@@ -34,7 +35,7 @@ def predict():
     content = image.read()
 
     encoded = base64.b64encode(content)
-    print(encoded)
+    # print(encoded)
 
     num_plate=get_num_plate(content)
 
@@ -57,8 +58,35 @@ def predict():
 
     return response
 
+def write_json(data):
+    with open('visits.json', 'w') as outfile:
+        json.dump(data, outfile, indent=4)
+
 def get_checkin_record(num_plate):
-    return 'AWK477'
+    with open('visits.json') as json_file:
+        data = json.load(json_file)
+        visits=data['visits']
+
+        checkin_records=list(filter(lambda visit:is_checkin_record(visit,num_plate), visits))
+
+        if not checkin_records:
+            data['visits'].append({
+                "startTime": get_current_time(),
+                "numberPlate": num_plate
+            })
+
+            write_json(data)
+            return None
+
+        return checkin_records[0]
+
+def is_checkin_record(visit, num_plate):
+    if 'finishTime' in visit:
+        # isc= visit['finishTime'] is None and visit['numberPlate'] == num_plate
+        # print(isc)
+        return False
+
+    return True
 
 def get_num_plate(content):
     return 'AWK477'
@@ -68,7 +96,7 @@ def get_current_time():
     now = datetime.now()
 
     # dd/mm/YY H:M:S
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    dt_string = now.strftime("%H:%M")
     return dt_string
 
 app.run()
