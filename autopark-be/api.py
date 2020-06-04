@@ -1,12 +1,14 @@
-import pandas as pd
-import numpy as np
+# import pandas as pd
+# import numpy as np
 
 from flask import Flask, json_available, jsonify
 from flask_cors import CORS, cross_origin
 from flask import request
-import io
+# import io
+# from PIL import Image
 import base64
-from PIL import Image
+from datetime import datetime
+
 
 app = Flask(__name__)
 cors= CORS(app)
@@ -40,7 +42,8 @@ def predict():
 
     if checkin_record is None:
         return {
-            "startTimer": true
+            "startTimer": True,
+            "startTime": get_current_time()
         }
 
     response =	{
@@ -59,3 +62,12 @@ def get_checkin_record(num_plate):
 
 def get_num_plate(content):
     return 'AWK477'
+
+
+def get_current_time():
+    now = datetime.now()
+
+    # dd/mm/YY H:M:S
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    return dt_string
+

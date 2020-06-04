@@ -81,7 +81,9 @@ function SummaryComp(props) {
           </div>
         </>
         :
-        <div>Testing</div>
+        <div>
+          <h4>Check in time: {data.startTime} </h4>
+        </div>
       }
     </div >
   );
