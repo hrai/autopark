@@ -16,11 +16,25 @@ const useStyles = makeStyles({
   th: {
     fontWeight: "bold",
   },
+  img: {
+    display: "block",
+    marginLeft: "auto",
+    marginRight: "auto",
+    width: "25%",
+    padding: "20px",
+  },
+  plate: {
+    fontWeight: "bold",
+    textAlign: "center",
+  }
 });
 
 function SummaryComp(props) {
   const classes = useStyles();
   const data = props.location.state.data;
+
+  const imageData = data.image_b64;
+  const imageContent = `data:image/png;base64,${imageData}`;
 
   return (
     <div class="container">
@@ -55,7 +69,10 @@ function SummaryComp(props) {
           </TableBody>
         </Table>
       </TableContainer >
-
+      <div>
+        <img className={classes.img} src={imageContent} alt="number plate" />
+        <p className={classes.plate}>Number plate: {data.numberPlate}</p>
+      </div>
     </div >
   );
 }
