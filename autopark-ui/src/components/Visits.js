@@ -30,6 +30,7 @@ export default function Visits() {
 
   return (
     <div class="container">
+      <h3>Visits</h3>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
