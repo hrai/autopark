@@ -23,7 +23,6 @@ def hello_world():
 def preprocess():
     print("1")
 
-#TODO - Model prediction function
 @app.route('/predict', methods=['POST'])
 @cross_origin()
 def predict():
@@ -46,26 +45,3 @@ def predict():
 
     return response
 
-def get_image_with_bb(image):
-    imgdata = base64.b64decode(str(image))
-
-    print(imgdata)
-    image = Image.open(io.BytesIO(imgdata))
-
-    return image
-
-    # BytesIO is an in-memory file abstraction so we don't have
-    # to write any actual files to disk
-    f = io.BytesIO()
-    image_stream=Image.open(image.stream)
-    image_stream.save(f,"PNG")
-    image_png_bytes = f.getvalue()
-
-    image_png_b64 = b64encode(image_png_bytes).decode()
-    # remove newlines
-    image_png_b64 = image_png_b64.replace('\n', '')
-    image_data_url = 'data:image/png;base64,' + image_png_b64
-
-    return image_data_url
-
-app.run()
