@@ -36,47 +36,54 @@ function SummaryComp(props) {
 
   const imageData = data.image_b64;
   const imageContent = `data:image/png;base64,${imageData}`;
+  const startTimer = data.startTimer || false;
 
   return (
     <div class="container">
       <h3>Summary</h3>
-      <div className={classes.table}>
-        <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="simple table">
-            <TableBody>
-              <TableRow key="1">
-                <TableCell component="th" scope="row" className={classes.th}>
-                  Start Time
+      {startTimer ?
+        <>
+          <div className={classes.table}>
+            <TableContainer component={Paper}>
+              <Table className={classes.table} aria-label="simple table">
+                <TableBody>
+                  <TableRow key="1">
+                    <TableCell component="th" scope="row" className={classes.th}>
+                      Start Time
                 </TableCell>
-                <TableCell align="right">{data.startTime}</TableCell>
-              </TableRow>
-              <TableRow key="2" >
-                <TableCell component="th" scope="row" className={classes.th}>
-                  Finish Time
+                    <TableCell align="right">{data.startTime}</TableCell>
+                  </TableRow>
+                  <TableRow key="2" >
+                    <TableCell component="th" scope="row" className={classes.th}>
+                      Finish Time
                 </TableCell>
-                <TableCell align="right">{data.finishTime}</TableCell>
-              </TableRow>
-              <TableRow key="3">
-                <TableCell component="th" scope="row" className={classes.th}>
-                  Total Time
+                    <TableCell align="right">{data.finishTime}</TableCell>
+                  </TableRow>
+                  <TableRow key="3">
+                    <TableCell component="th" scope="row" className={classes.th}>
+                      Total Time
               </TableCell>
-                <TableCell align="right">{data.totalTime}</TableCell>
-              </TableRow>
-              <TableRow key="4">
-                <TableCell component="th" scope="row" className={classes.th}>
-                  Amount
+                    <TableCell align="right">{data.totalTime}</TableCell>
+                  </TableRow>
+                  <TableRow key="4">
+                    <TableCell component="th" scope="row" className={classes.th}>
+                      Amount
               </TableCell>
-                <TableCell align="right">{data.amount}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer >
-      </div >
-      <div>
-        <img className={classes.img} src={imageContent} alt="number plate" />
-        <p className={classes.plate}>Number plate: {data.numberPlate}</p>
-      </div>
-    </div>
+                    <TableCell align="right">{data.amount}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer >
+          </div >
+          <div>
+            <img className={classes.img} src={imageContent} alt="number plate" />
+            <p className={classes.plate}>Number plate: {data.numberPlate}</p>
+          </div>
+        </>
+        :
+        <div>Testing</div>
+      }
+    </div >
   );
 }
 

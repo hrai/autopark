@@ -34,6 +34,15 @@ def predict():
     encoded = base64.b64encode(content)
     print(encoded)
 
+    num_plate=get_num_plate(content)
+
+    checkin_record=get_checkin_record(num_plate)
+
+    if checkin_record is None:
+        return {
+            "startTimer": true
+        }
+
     response =	{
         "startTime": "09:30",
         "finishTime": "10:15",
@@ -45,3 +54,8 @@ def predict():
 
     return response
 
+def get_checkin_record(num_plate):
+    return 'AWK477'
+
+def get_num_plate(content):
+    return 'AWK477'
