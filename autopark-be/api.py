@@ -1,20 +1,22 @@
-# import pandas as pd
-# import numpy as np
-
+import tensorflow as tf
+from tensorflow.keras.applications.xception import Xception, preprocess_input, decode_predictions
+from tensorflow.keras.models import load_model
 from flask import Flask, json_available, jsonify
 from flask_cors import CORS, cross_origin
 from flask import request
-# import io
-# from PIL import Image
-import base64
-import json
 from datetime import datetime
 
+import base64
+import json
 
 app = Flask(__name__)
 cors= CORS(app)
 app.config["DEBUG"] = True
 app.config["CORS_HEADERS"] = 'Content-Type'
+
+
+# Serve tf model globally to reduce memory load & ensure availability
+model = tf.keras.models.load_model('/models/production_model.h5')
 
 @app.route('/', methods=['GET'])
 @cross_origin()
@@ -22,25 +24,61 @@ def hello_world():
     response = { 'Status': "API is up and running!" }
     return jsonify(response),200
 
-#TODO - data pre-processing function
-def preprocess():
-    print("1")
+def preprocess(input_image):
+        # extract image data to numpy array
+        image_path = os.path.join(directory, input_image)
+        img = image.load_img(image_path, target_size=target_size)
+        img_arr = image.img_to_array(img)
+        img_arr = preprocess_input(img_arr) # Xception preprocessing
+
+        return img_arr
+
 
 @app.route('/predict', methods=['POST'])
 @cross_origin()
 def predict():
+    # fetch payload from response, including input image
     formData=request.form
     filename='num_plate'
     image=request.files[filename]
-    content = image.read()
+    
+    # pre-process input image
+    processed_image = preprocess(image)
 
-    encoded = base64.b64encode(content)
-    # print(encoded)
+    # generate prediction on imput image, get bounding box
+    y_pred = model.predict(X_test) 
+    get_bbox(y_pred[0])
 
+    img = image.array_to_img(X_test[index])
+    ax[i, j].imshow(img)
+    ax[i, j].axis("off")
+
+    # predicted coordinates
+    xmin_p, ymin_p, xmax_p, ymax_p = y_pred
+    width_p = xmax_p - xmin_p
+    height_p = ymax_p - ymin_p
+
+    # draw bounding boxes; lime = ground truth, red = predicted
+    rect_p = patches.Rectangle((xmin_p, ymin_p), width_p, height_p, linewidth=2, edgecolor="red", facecolor="none")
+    ax[i, j].add_patch(rect_p)
+    
+    # save annotated figure as image
+    plt.savefig('output.png')
+
+    # convert output image to jpg
+    Image.open('output.png').save('output.jpg', 'JPEG')
+
+
+    # content = image.read()
+
+    encoded = base64.b64encode('output.png')
+
+    # Parsed number plate from OCR model
     num_plate=get_num_plate(content)
 
     checkin_record=get_checkin_record(num_plate)
 
+    # Check if recognised vehicle has checked in before, otherwise start a new parking session
     if checkin_record is None:
         return {
             "startTimer": True,
