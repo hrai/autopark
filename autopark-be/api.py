@@ -1,6 +1,11 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 import tensorflow as tf
-from tensorflow.keras.applications.xception import Xception, preprocess_input, decode_predictions
+from tensorflow.keras.applications.xception import Xception, preprocess_input
+from tensorflow.keras.preprocessing import k_image
 from tensorflow.keras.models import load_model
+from PIL import Image
 from flask import Flask, json_available, jsonify
 from flask_cors import CORS, cross_origin
 from flask import request
@@ -24,49 +29,71 @@ def hello_world():
     response = { 'Status': "API is up and running!" }
     return jsonify(response),200
 
-def preprocess(input_image):
-        # extract image data to numpy array
-        image_path = os.path.join(directory, input_image)
-        img = image.load_img(image_path, target_size=target_size)
-        img_arr = image.img_to_array(img)
-        img_arr = preprocess_input(img_arr) # Xception preprocessing
 
-        return img_arr
+def preprocess(input_image):
+    # load and resize the image
+    img = Image.open(input_image)
+    img = img.resize((512, 512))
+
+    # extract image data to numpy array
+    img_arr = k_image.img_to_array(img)
+    img_arr = preprocess_input(img_arr) # Xception preprocessing
+
+    # reshape array to include batch size (1 in this case) since model was trained on batches
+    # e.g. [512, 512, 3] to [1, 512, 512, 3]
+    img_arr = np.expand_dims(img_arr, axis=0)
+
+    return img_arr
+
+
+def save_patched_img(img, bbox):
+    """ Saves images with bounding box drawn on it.
+    Returns: (string) Filepath of saved image """
+
+    # plot image
+    fig, ax = plt.subplots(1, figsize=(10, 10))
+
+    img = k_image.array_to_img(img)
+    ax.imshow(img)
+    ax.axis("off")
+
+    # predicted coordinates
+    xmin, ymin, xmax, ymax = bbox
+    width = xmax - xmin
+    height = ymax - ymin
+
+    # draw predicted bounding box on image
+    rect = patches.Rectangle((xmin, ymin), width, height, linewidth=2, edgecolor="red", facecolor="none")
+    ax.add_patch(rect)
+    
+    # save annotated figure as image
+    filepath = "output.png"
+    fig.savefig(filepath)
+
+    return filepath
 
 
 @app.route('/predict', methods=['POST'])
 @cross_origin()
 def predict():
     # fetch payload from response, including input image
-    formData=request.form
-    filename='num_plate'
-    image=request.files[filename]
+    formData = request.form
+    filename = 'num_plate'
+    image = request.files[filename]
     
     # pre-process input image
     processed_image = preprocess(image)
 
-    # generate prediction on imput image, get bounding box
-    y_pred = model.predict(X_test) 
-    get_bbox(y_pred[0])
+    # generate prediction on input image, get bounding box
+    y_pred = model.predict(processed_image)
+    y_pred = y_pred[0] * 512 # de-normalises bounding box predictions
 
-    img = image.array_to_img(X_test[index])
-    ax[i, j].imshow(img)
-    ax[i, j].axis("off")
-
-    # predicted coordinates
-    xmin_p, ymin_p, xmax_p, ymax_p = y_pred
-    width_p = xmax_p - xmin_p
-    height_p = ymax_p - ymin_p
-
-    # draw bounding boxes; lime = ground truth, red = predicted
-    rect_p = patches.Rectangle((xmin_p, ymin_p), width_p, height_p, linewidth=2, edgecolor="red", facecolor="none")
-    ax[i, j].add_patch(rect_p)
-    
-    # save annotated figure as image
-    plt.savefig('output.png')
+    # draw bbox on image and save; get filepath/filename
+    img_path = save_patched_img(processed_image[0], y_pred)
 
     # convert output image to jpg
-    Image.open('output.png').save('output.jpg', 'JPEG')
+    # Image.open('output.png').save('output.jpg', 'JPEG')
+    Image.open(img_path).save('output.jpg', 'JPEG')
 
 
     # content = image.read()
