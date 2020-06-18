@@ -103,6 +103,9 @@ def preprocess(input_image):
 
     return img_arr
 
+def randomString(stringLength=8):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
 
 def save_patched_img(img, bbox):
     """ Saves images with bounding box drawn on it.
@@ -125,11 +128,11 @@ def save_patched_img(img, bbox):
     ax.add_patch(rect)
 
     # crop image to plate and save
-    cropped_plate = img.crop((xmin, ymin, xmax, ymax))
-    cropped_plate.save("cropped_plate.png")
-    
+    cropped_plate = k_image.img_to_array(img.crop((xmin, ymin, xmax, ymax)))
+
     # save annotated figure as image
-    filepath = "output.png"
+    filename=randomString()
+    filepath = "output_" + filename + ".jpg"
     fig.savefig(filepath)
 
     return filepath, cropped_plate
@@ -142,7 +145,7 @@ def predict():
     formData = request.form
     filename = 'num_plate'
     image = request.files[filename]
-    
+
     # pre-process input image
     processed_image = preprocess(image)
 
