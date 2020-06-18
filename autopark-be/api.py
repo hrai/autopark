@@ -1,8 +1,12 @@
 import numpy as np
+import os, io
+import string
+import random
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import tensorflow as tf
 import cv2
+
 from tensorflow.keras.applications.xception import Xception, preprocess_input
 from tensorflow.keras.preprocessing import image as k_image
 from tensorflow.keras.models import load_model
@@ -128,14 +132,15 @@ def save_patched_img(img, bbox):
     ax.add_patch(rect)
 
     # crop image to plate and save
-    cropped_plate = k_image.img_to_array(img.crop((xmin, ymin, xmax, ymax)))
+    cropped_plate = img.crop((xmin, ymin, xmax, ymax))
+    cropped_plate.save('./images/annotated/cropped_plate.jpg')
 
     # save annotated figure as image
     filename=randomString()
-    filepath = "output_" + filename + ".jpg"
+    filepath = "./images/annotated/output_" + filename + ".png"
     fig.savefig(filepath)
 
-    return filepath, cropped_plate
+    return filepath, './images/annotated/cropped_plate.jpg'
 
 
 @app.route('/predict', methods=['POST'])
@@ -145,6 +150,7 @@ def predict():
     formData = request.form
     filename = 'num_plate'
     image = request.files[filename]
+    print(type(image))
 
     # pre-process input image
     processed_image = preprocess(image)
@@ -156,20 +162,14 @@ def predict():
     # draw bbox on image and save; get filepath and cropped plate image
     img_path, cropped_plate = save_patched_img(processed_image[0], y_pred)
 
-    # convert output image to jpg
-    # Image.open('output.png').save('output.jpg', 'JPEG')
-    Image.open(img_path).save('output.png')
+    with open(img_path, "rb") as image_file:
+        encoded_string = str(base64.b64encode(image_file.read()))
 
-    # content = image.read()
-
-    encoded = base64.b64encode('output.png')
-
-    # Get character array
-    char_arr = get_localized_images(cropped_plate)
+    # Generate localized characters
+    localized_char_paths = get_localized_images(cropped_plate)
 
     # Parsed number plate from OCR model
-    num_plate=get_num_plate(char_arr)
-    print(num_plate)
+    num_plate = get_num_plate(localized_char_paths)
 
     checkin_record=get_checkin_record(num_plate)
 
@@ -185,7 +185,7 @@ def predict():
         "finishTime": "10:15",
         "totalTime": "45m",
         "amount": "$8.82",
-        "image_b64": encoded,
+        "image_b64": encoded_string,
         "numberPlate": num_plate
     }
 
@@ -224,6 +224,11 @@ def is_checkin_record(visit, num_plate):
 
 # Get character classification prediction for a single image
 def cnnCharRecognition(img):
+    dictionary = {0:'0', 1:'1', 2 :'2', 3:'3', 4:'4', 5:'5', 6:'6', 7:'7', 8:'8', 9:'9', 10:'A',
+                11:'B', 12:'C', 13:'D', 14:'E', 15:'F', 16:'G', 17:'H', 18:'I', 19:'J', 20:'K',
+                21:'L', 22:'M', 23:'N', 24:'P', 25:'Q', 26:'R', 27:'S', 28:'T', 29:'U',
+                30:'V', 31:'W', 32:'X', 33:'Y', 34:'Z'}
+    
     image = img / 255.0
     image = np.reshape(image, (1,71,71,3))
     new_predictions = loaded_char_model.predict(image)
@@ -232,35 +237,43 @@ def cnnCharRecognition(img):
     return dictionary[char]
 
 # Return estimated number plate from model
-def get_num_plate(char_array):
-   
-    for img in char_array:
-        img = array_to_img(img)
-        img = img.convert('LA')
-        img = img.resize((71,71)) 
+def get_num_plate(file_names):
+    numberplate = []
+    for file in file_names:
+        img=k_image.load_img(file, target_size=(71,71))
+        # img=Image.open(file).resize((71,71)) 
         img = np.asarray(img, dtype='float32')
         pred = cnnCharRecognition(img)
+        print(pred)
         numberplate.append(pred)
 
-        return ''.join(numberplate)
+    return ''.join(numberplate)
        
-
+# Apply canny edge detection 
+def auto_canny(image, sigma=0.33):
+    v = np.median(image)
+    lower = int(max(0, (1.0 - sigma) * v))
+    upper = int(min(255, (1.0 + sigma) * v))
+    edged_image = cv2.Canny(image, lower, upper)
+ 
+    return edged_image
+    
 # Get localized number plate characters in array form to pass into classificatio model
 def get_localized_images(cropped_plate):
-    print(cropped_plate.shape)
-   
-   
-   
     # Loop through each image, apply pre-processing & localize onto each character
-    gray = cv2.cvtColor(cropped_plate, cv2.COLOR_BGR2GRAY)
+    img = cv2.imread(cropped_plate)
+
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
-    thresh_inv = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY_INV,39,1)
+    thresh_inv = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY_INV,39,1)
     edges = auto_canny(thresh_inv)
     ctrs, _ = cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     sorted_ctrs = sorted(ctrs, key=lambda ctr: cv2.boundingRect(ctr)[0])
 
     img_area = img.shape[0]*img.shape[1]
-
+    
+    bounding_boxes = []
+    counter = 0
     # Get bounding box co-ordinates for image cropping
     for i, ctr in enumerate(sorted_ctrs):
         x, y, w, h = cv2.boundingRect(ctr)
@@ -275,15 +288,16 @@ def get_localized_images(cropped_plate):
 
     # Crop bounding boxes and save into new dir
     count = 0
-    char_array = []
+    file_names = []
     for box in bounding_boxes:
             x,y,w,h = box
             ROI = img[y:y+h, x:x+w]
-            char_array.append(ROI)
-            # cv2.imwrite("/images/char_{}.png".format(str(count)), ROI)
+            filename = "./images/characters/char_{}.jpg".format(str(count))
+            file_names.append(filename)
+            cv2.imwrite(filename, ROI)
             count += 1
 
-    return char_array
+    return file_names
 
 
 def get_current_time():
