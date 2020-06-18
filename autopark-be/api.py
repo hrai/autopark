@@ -65,12 +65,16 @@ def save_patched_img(img, bbox):
     # draw predicted bounding box on image
     rect = patches.Rectangle((xmin, ymin), width, height, linewidth=2, edgecolor="red", facecolor="none")
     ax.add_patch(rect)
+
+    # crop image to plate and save
+    cropped_plate = img.crop((xmin, ymin, xmax, ymax))
+    cropped_plate.save("cropped_plate.jpg")
     
     # save annotated figure as image
     filepath = "output.png"
     fig.savefig(filepath)
 
-    return filepath
+    return filepath, cropped_plate
 
 
 @app.route('/predict', methods=['POST'])
@@ -88,8 +92,8 @@ def predict():
     y_pred = model.predict(processed_image)
     y_pred = y_pred[0] * 512 # de-normalises bounding box predictions
 
-    # draw bbox on image and save; get filepath/filename
-    img_path = save_patched_img(processed_image[0], y_pred)
+    # draw bbox on image and save; get filepath and cropped plate image
+    img_path, cropped_plate = save_patched_img(processed_image[0], y_pred)
 
     # convert output image to jpg
     # Image.open('output.png').save('output.jpg', 'JPEG')
