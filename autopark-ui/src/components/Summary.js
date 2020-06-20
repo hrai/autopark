@@ -39,7 +39,7 @@ function SummaryComp(props) {
   const startTimer = data.startTimer || false;
 
   return (
-    <div class="container">
+    <div className="container">
       <h3>Summary</h3>
       {!startTimer ?
         <>
