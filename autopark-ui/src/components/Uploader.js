@@ -31,10 +31,10 @@ function UploaderComp(props) {
       <h3>Uploader</h3>
       <form onSubmit={onSubmit}>
         <div class="form-group">
-          <label for="num_plate">Please select an image to upload below:</label>
+          <label htmlFor="num_plate">Please select an image to upload below:</label>
           <input type="file" class="form-control" name="num_plate" id="num_plate" aria-describedby="emailHelp" />
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" className="btn btn-primary">Submit</button>
       </form>
     </div >
   );
