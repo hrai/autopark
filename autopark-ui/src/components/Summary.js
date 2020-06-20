@@ -35,7 +35,7 @@ function SummaryComp(props) {
   const data = props.location.state.data;
 
   const imageData = data.image_b64;
-  const imageContent = `data:image/png;charset=utf-8;base64,${imageData}`;
+  const imageContent = `data:image/png;base64, ${imageData}`;
   const startTimer = data.startTimer || false;
 
   return (
