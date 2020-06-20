@@ -45,7 +45,7 @@ def mean_iou(a, b):
         boxes.
     """
     epsilon = keras.backend.epsilon()
-    
+
     # COORDINATES OF THE INTERSECTION BOXES
     x1 = keras.backend.max([a[:, 0], b[:, 0]], axis=0)
     y1 = keras.backend.max([a[:, 1], b[:, 1]], axis=0)
@@ -69,10 +69,10 @@ def mean_iou(a, b):
 
     # RATIO OF AREA OF OVERLAP OVER COMBINED AREA
     iou = area_overlap / (area_combined + epsilon)
-    
-    # Mean IoU 
+
+    # Mean IoU
     iou_mean = keras.backend.mean(iou)
-    
+
     return iou_mean
 
 
@@ -81,9 +81,10 @@ dependencies = {
     'mean_iou': mean_iou
 }
 
+'''
 loaded_plate_model = tf.keras.models.load_model('models/model.59-mIoU0.8160.h5', custom_objects=dependencies)
 loaded_char_model = tf.keras.models.load_model('models/model.10-acc1.0000.h5')
-
+'''
 
 @app.route('/', methods=['GET'])
 @cross_origin()
@@ -150,8 +151,8 @@ def predict():
     formData = request.form
     filename = 'num_plate'
     image = request.files[filename]
-    print(type(image))
 
+    '''
     # pre-process input image
     processed_image = preprocess(image)
 
@@ -161,9 +162,25 @@ def predict():
 
     # draw bbox on image and save; get filepath and cropped plate image
     img_path, cropped_plate = save_patched_img(processed_image[0], y_pred)
+    '''
 
-    with open(img_path, "rb") as image_file:
-        encoded_string = str(base64.b64encode(image_file.read()))
+    img_file="images/annotated/output_vnmrahlb.png"
+    with open(img_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+
+    response =	{
+        "startTime": "09:30",
+        "finishTime": "10:15",
+        "totalTime": "45m",
+        "amount": "$8.82",
+        "image_b64": encoded_string,
+        "numberPlate": "AWK477"
+    }
+
+    return response
+
+
+
 
     # Generate localized characters
     localized_char_paths = get_localized_images(cropped_plate)
@@ -228,12 +245,12 @@ def cnnCharRecognition(img):
                 11:'B', 12:'C', 13:'D', 14:'E', 15:'F', 16:'G', 17:'H', 18:'I', 19:'J', 20:'K',
                 21:'L', 22:'M', 23:'N', 24:'P', 25:'Q', 26:'R', 27:'S', 28:'T', 29:'U',
                 30:'V', 31:'W', 32:'X', 33:'Y', 34:'Z'}
-    
+
     image = img / 255.0
     image = np.reshape(image, (1,71,71,3))
     new_predictions = loaded_char_model.predict(image)
     char = np.argmax(new_predictions)
-    
+
     return dictionary[char]
 
 # Return estimated number plate from model
@@ -241,37 +258,37 @@ def get_num_plate(file_names):
     numberplate = []
     for file in file_names:
         img=k_image.load_img(file, target_size=(71,71))
-        # img=Image.open(file).resize((71,71)) 
+        # img=Image.open(file).resize((71,71))
         img = np.asarray(img, dtype='float32')
         pred = cnnCharRecognition(img)
         print(pred)
         numberplate.append(pred)
 
     return ''.join(numberplate)
-       
-# Apply canny edge detection 
+
+# Apply canny edge detection
 def auto_canny(image, sigma=0.33):
     v = np.median(image)
     lower = int(max(0, (1.0 - sigma) * v))
     upper = int(min(255, (1.0 + sigma) * v))
     edged_image = cv2.Canny(image, lower, upper)
- 
+
     return edged_image
-    
+
 # Get localized number plate characters in array form to pass into classificatio model
 def get_localized_images(cropped_plate):
     # Loop through each image, apply pre-processing & localize onto each character
     img = cv2.imread(cropped_plate)
 
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
+
     thresh_inv = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY_INV,39,1)
     edges = auto_canny(thresh_inv)
     ctrs, _ = cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     sorted_ctrs = sorted(ctrs, key=lambda ctr: cv2.boundingRect(ctr)[0])
 
     img_area = img.shape[0]*img.shape[1]
-    
+
     bounding_boxes = []
     counter = 0
     # Get bounding box co-ordinates for image cropping
