@@ -22,10 +22,10 @@ function createData(numPlate, parkedTime, amount, paid, date) {
 }
 
 const rows = [
-  createData('NPY-234', '2hr 23m', 89.0, true, '20 May 2019'),
-  createData('NPY-234', '2hr 23m', 89.0, true, '20 May 2019'),
-  createData('NPY-234', '2hr 23m', 89.0, true, '20 May 2019'),
-  createData('NPY-234', '2hr 23m', 89.0, true, '20 May 2019')
+  createData('AWK477', '24m', 5.0, true, '20 March 2019'),
+  createData('AWK477', '3hr 23m', 20.0, true, '20 May 2019'),
+  createData('AWK477', '2hr 33m', 15.0, true, '30 June 2019'),
+  createData('AWK477', '1hr', 10.0, true, '20 June 2019'),
 ];
 
 export default function Visits() {
