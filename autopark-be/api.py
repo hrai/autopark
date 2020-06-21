@@ -1,4 +1,5 @@
 import numpy as np
+from flask import jsonify
 import os, io
 import string
 import random
@@ -143,6 +144,11 @@ def save_patched_img(img, bbox):
 
     return filepath, './images/annotated/cropped_plate.jpg'
 
+@app.route('/visits', methods=['GET'])
+@cross_origin()
+def visits():
+    with open('visits.json', 'r') as outfile:
+        return outfile.read()
 
 @app.route('/predict', methods=['POST'])
 @cross_origin()
